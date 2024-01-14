@@ -1,0 +1,73 @@
+**Free
+// PROJECT NAME: Student Grade Calc
+// PROGRAMMER NAME: JACOB ANDERSON
+// DATE: 02/03/2022
+//
+// THE PURPOSE OF THIS PROJECT IS TO CREATE
+// AN RPG PROGRAM THAT WILL INTERACT WITH MY INQ
+// SCREEN FILE. IT WILL CALCULATE THE STUDENTS
+// GRADE AND WRITE PERTINENT INFORMATION
+// TO THE MYPOINTS DATA FILE.
+//
+//---------------------------------Control options
+Ctl-opt Option(*Nodebugio);
+
+//---------------------------------File Declarations
+
+Dcl-f WUSTDP Disk Usage(*Input) Keyed;
+Dcl-f MYPOINTSP Disk Usage(*Output);
+Dcl-f POINTS Workstn Indds(Indicators);
+
+//---------------------------------Indicator Data Structures
+
+Dcl-ds Indicators Len(99);
+  Exit Ind Pos(3);                  // F3=Exit
+  Cancel Ind Pos(12);               // F12=Cancel
+  INVSTUD IND POS(90) INZ(*Off);    // Invalid Student
+  INVPOINTS  IND POS(95) INZ(*Off); // Invalid Points
+END-DS;
+
+//---------------------------------Constant declarations
+Dcl-s GRADPERC ZONED(3:0);
+//---------------------------------Data Structure declarations
+
+//---------------------------------Standalone variable declarations
+
+//---------------------------------Main Procedure
+  Dow Not Exit;                           //Begin Loop
+    Exfmt SCRN1;                          //Screen 1
+    IF Not Exit;                          //Do while not exiting
+      Chain STUNO WUSTDP;                 //Chain the key from WUSTDP
+      INVSTUD =  NOT %FOUND(WUSTDP);      //Turn the INVSTUD indicator on
+      IF %Found(WUSTDP);                  //If SSN is found
+        FULLNAME = %Trim(SFNAME)+ ' ' + %Trim(SLNAME); //Get Full name
+        If Not Exit and Not Cancel;      //Begin Loop
+          Exfmt SCRN2;                    //Execute screen 2
+          IF Not Exit;
+            Dow (PTSPOSSIBL<=0);
+              INVPOINTS = *On;
+              Exfmt SCRN2;
+            ENDDO;
+            Dow (PTSPOSSIBL < PTSRECEIVE);
+              INVPOINTS = *On;
+              Exfmt SCRN2;
+            Enddo;
+            If Not Exit and Not Cancel;
+            EVAL(H) GRADPERC = (PTSRECEIVE/PTSPOSSIBL)*100; //Calculate the grade percentage
+            If GRADPERC <=59;
+              MSGP='Student Failed';
+            ELSE;
+              MSGP='Student Passed';
+            ENDIF;
+            ENDIF;
+            Exfmt SCRN3;
+            WRITE POINTSREC;
+          ENDIF;
+        ENDIF;
+      ENDIF;
+    ENDIF;
+  ENDDO;
+
+  *Inlr = *On;
+  return;
+                                                            

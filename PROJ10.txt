@@ -1,0 +1,47 @@
+**Free
+// PROJECT NAME: PROJECT 10
+// PROGRAMMER NAME: JACOB ANDERSON
+// DATE: 11/18/2021
+// THE PURPOSE OF THIS PROJECT IS TO CREATE
+// AN IQUIRY PROGRAM USING SCREENS
+//
+//
+//---------------------------------Control options
+Ctl-opt Option(*Nodebugio);
+
+//---------------------------------File Declarations
+
+Dcl-f WUHRLYP Disk Usage(*Input) Keyed;
+Dcl-f WUHRLY Workstn Indds(Indicators);
+
+//---------------------------------Indicator Data Structures
+
+Dcl-ds Indicators Len(99);
+  Exit Ind Pos(3);               // F3=Exit
+  Cancel Ind Pos(12);            // F12=Cancel
+  NOEMPNO IND POS(90) INZ(*Off); // No EMPNO Indicator
+END-DS;
+
+//---------------------------------Constant declarations
+
+//---------------------------------Data Structure declarations
+
+//---------------------------------Standalone variable declarations
+
+//---------------------------------Main Procedure
+
+  Dow Not Exit;                              //Begin Loop
+    Exfmt SCRN1;                             //Screen 1
+     If Not Exit;                            //Do while not exiting
+     Chain EMPNO WUHRLYP;                    //Chain the key from WUHRLYP
+         If %Found(WUHRLYP);                 //If EMPNO is found
+             Exfmt SCRN2;                    //Execute screen 2
+         ELSE;                               //If no EMPNO is found
+             NOEMPNO =  NOT %FOUND(WUHRLYP); //Turn the no EMPNO indicator on
+         ENDIF;
+     ENDIF;
+  ENDDO;
+
+*Inlr = *On;
+       return;
+                           

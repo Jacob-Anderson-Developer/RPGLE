@@ -1,0 +1,48 @@
+**Free
+// PROJECT NAME: CLSOFF
+// PROGRAMMER NAME: JACOB ANDERSON
+// DATE: 11/4/2021
+// THE PURPOSE OF THIS PROJECT IS TO DEMONSTRATE
+// CHAINING IN A LOOP AND PRINTING AN ERROR LINE.
+//
+//
+//---------------------------------Control options
+Ctl-opt Option(*Nodebugio);
+//---------------------------------File Declarations
+Dcl-f WUCRSP Disk Keyed;
+Dcl-f WUSCTP Disk Keyed;
+Dcl-f CLSLST1  Printer Usage(*Output) Oflind(Endofpage);
+
+//---------------------------------Constant declarations
+
+//---------------------------------Data Structure declarations
+
+//---------------------------------Standalone variable declarations
+
+Dcl-s Endofpage Ind Inz(*On);
+
+//---------------------------------Main Procedure
+
+Read WUSCTP;                      // Priming Read
+Dow Not %Eof;                     // Begin Loop
+
+CHAIN (DEPT:%CHAR(CRSNO)) WUCRSP; // Begin Chaining Keys
+
+If %Found(WUCRSP);     // If statement decides if the detail
+  If Endofpage;        // line or error line will be written
+
+                       //
+    Write HEADING;     //  Signals to write headings again
+      Endofpage = *off;//  if end of page is reached
+Endif;                 //
+  Write DETAIL;        //
+
+
+Else;                  //
+  Write ERROR;         //
+Endif;                 //  Writes error line if info
+  Read WUSCTP;         //  is unavailable
+Enddo;                 //
+*Inlr = *On;           //
+       return;         //
+                                                     

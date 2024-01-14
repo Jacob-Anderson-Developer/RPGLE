@@ -1,0 +1,27 @@
+       //Program Name: MAKEDATE
+       //Programmer: JACOB ANDERSON
+       //DATE: 3-18-2022
+
+       // ***********************************************************
+       // This program is called by PRJ7CALLER
+       // it generates the date to remind customers via email
+       // ***********************************************************
+
+
+       // Main Prototype
+       Dcl-pr Main ExtPgm('MAKEDATE');
+         *N PACKED(8:0);
+         *N DATE(*USA);
+       END-PR;
+
+       // Procedure Interface
+       Dcl-pi Main;
+         DATEIN PACKED(8:0);
+         DATEOUT DATE(*USA);
+       END-PI;
+
+       // Logic
+       DATEOUT=%DATE(DATEIN:*USA);
+
+       *INLR = *On;
+       Return;                                                                    

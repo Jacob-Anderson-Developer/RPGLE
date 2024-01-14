@@ -1,0 +1,43 @@
+**Free
+// PROJECT NAME: WUINSTP
+// PROGRAMMER NAME: JACOB ANDERSON
+// DATE: 01/25/2022
+// THE PURPOSE OF THIS PROJECT IS TO LEARN
+// HOW TO USE ARRAYS IN RPG
+//
+//---------------------------------Control options
+Ctl-opt Option(*Nodebugio);
+//---------------------------------File Declarations
+Dcl-f GRADEBOOK     Disk Keyed;
+Dcl-f GRADES   Printer Usage(*Output) Oflind(Endofpage);
+
+//---------------------------------Constant declarations
+
+//---------------------------------Data Structure declarations
+Dcl-ds *N;
+  SCORES CHAR(75);
+  SCOREARRAY Zoned(3:0) Dim(25) Pos(1);
+END-DS;
+//---------------------------------Standalone variable declarations
+//Dcl-s SALARYTOT ZONED(9:2);
+//Dcl-s TODAY DATE Inz(*Sys);
+//Dcl-s Endofpage Ind Inz(*On);
+Dcl-s TOTAL ZONED(3:0);
+
+//---------------------------------Main Procedure
+Read GRADEBOOK;
+Dow Not %Eof(GRADEBOOK);
+
+       FULLNAME = %Trim(SFNAME)+ ' ' + %Trim(SLNAME);
+       TOTAL = %XFOOT(SCOREARRAY);
+
+If Endofpage;
+
+  Write HEADINGS;
+  Endofpage = *off;
+Endif;
+Write DETAIL;
+Read GRADEBOOK;
+Enddo;
+*Inlr = *On;
+       return;                                                                             

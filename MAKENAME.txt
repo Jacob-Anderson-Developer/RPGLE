@@ -1,0 +1,30 @@
+       //Program Name: MAKENAME
+       //Programmer: JACOB ANDERSON
+       //DATE: 3-18-2022
+
+       // ***********************************************************
+       // This program is called by PRJ7CALLER it creates a full
+       // name for the customer from the fname and lname fields
+       // ***********************************************************
+
+       // Main Prototype
+       Dcl-pr Main ExtPgm('MAKENAME');
+         *N CHAR(10) CONST;
+         *N CHAR(15) CONST;
+         *N CHAR(26);
+       END-PR;
+
+       // Procedure Interface
+       Dcl-pi Main;
+         CFNAME CHAR(10)CONST;
+         CLNAME CHAR(15)CONST;
+         CUSTNAME CHAR(26);
+       END-PI;
+
+
+       //Logic
+
+       CUSTNAME = %Trim(CFNAME)+ ' ' + %Trim(CLNAME);
+
+       *INLR = *On;
+       Return;                                                    

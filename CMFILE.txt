@@ -1,0 +1,67 @@
+**Free
+// PROJECT NAME: CMFILE
+// PROGRAMMER NAME: JACOB ANDERSON
+// DATE: 10/13/2021
+// THE PURPOSE OF THIS PROJECT IS TO IMPLEMENT VARIOUS CHARACTER
+// FUNCTIONS TO THE PROGRAM.
+//---------------------------------Control options
+Ctl-opt Option(*Nodebugio);
+//---------------------------------File Declarations
+Dcl-f CSCSTP   Disk       Usage(*Input);
+Dcl-f CMPRT    Printer Usage(*Output) Oflind(Endofpage);
+
+//---------------------------------Constant declarations
+Dcl-c Editp '0(   )   -    ';
+Dcl-c Editz '     -    ';
+
+//---------------------------------Data Structure declarations
+//Dcl-ds *N;
+//  FNAME Char(10);
+//    INIT Char(1) Overlay(FNAME);
+//END-DS;
+//Dcl-ds *N;
+//  EMPNO ZONED(9:0);
+//    SOCSEC1 ZONED(3:0) Pos(1);
+//    SOCSEC2 ZONED(2:0) Pos(4);
+//    SOCSEC3 ZONED(4:0) Pos(6);
+//END-DS;
+
+//---------------------------------Standalone variable declarations
+Dcl-s PHONE    ZONED(14:0);
+Dcl-s ZIP      ZONED(10:0);
+Dcl-s MyDate   VarChar(8);
+Dcl-s YearOut  Char (4);
+Dcl-s Balance  Char (9);
+
+
+Dcl-s Endofpage Ind Inz(*On);
+
+//---------------------------------Main Procedure
+Read CSCSTP;
+Dow Not %Eof(CSCSTP);
+
+MyDate = %Char(ORDDAT);
+
+IF %LEN(MyDate) = 7;
+  YearOut = %SUBST(MyDate:4:4);
+ELSE;
+  YearOut = %SUBST(MyDate:5:4);
+ENDIF;
+
+ZIP = %Editw(CZIP:Editz);
+PHONE = %Editw(CPHONE:Editp);
+
+BALANCE = %Editc(BALDUE:'J':*Cursym);
+
+If Endofpage;
+
+  Write HEADINGS;
+  Endofpage = *off;
+Endif;
+Write DETAIL;
+Read CSCSTP;
+Enddo;
+Write TOTALS;
+*Inlr = *On;
+       return;
+                                  

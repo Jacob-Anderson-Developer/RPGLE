@@ -1,0 +1,49 @@
+       //Program Name: MAKEPASS
+       //Programmer: JACOB ANDERSON
+       //DATE: 3-18-2022
+
+
+       // ***********************************************************
+       // This program is called by PRJ7CALLER it creates a password
+       // from CFNAME, CLNAME and CUSTNO
+       // ***********************************************************
+
+       //---------------------------------Standalone variable declarations
+       Dcl-s USERNO   CHAR (6);
+       Dcl-s RUFFN    CHAR (10);
+       Dcl-s RUFLN    CHAR (15);
+       Dcl-s RFFN     CHAR (1);
+       Dcl-s RFLN     CHAR (1);
+
+       //Constant Declarations
+       Dcl-c Lowercase 'abcdefghijklmnopqrstuvwxyz';
+       Dcl-c Uppercase 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+       // Main Prototype
+       Dcl-pr Main ExtPgm('MAKEPASS');
+         *N     CHAR(10) CONST;
+         *N     CHAR(15) CONST;
+         *N     ZONED(6:0) CONST;
+         *N     CHAR(9);
+       END-PR;
+
+       //Procedure Interface
+       Dcl-PI Main;
+         CFNAME CHAR(10) CONST;
+         CLNAME CHAR(15) CONST;
+         CUSTNO ZONED(6:0) CONST;
+         PASS CHAR(9);
+       END-PI;
+
+       // Logic
+       RUFFN = %XLATE(Uppercase:Lowercase:CFNAME);
+       RUFLN = %XLATE(Uppercase:Lowercase:CLNAME);
+       RFFN = %XLATE(Lowercase:Lowercase:RUFFN);
+       RFLN = %XLATE(Lowercase:Lowercase:RUFLN);
+       USERNO = %Char(CUSTNO);      //Convert Custno to a string
+
+       PASS = %Trim(RFFN) + %Trim(RFLN) + USERNO + '!';    //Generate Password
+
+       *INLR = *On;
+       Return;
+                                                           

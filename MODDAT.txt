@@ -1,0 +1,33 @@
+       //Program Name: MODDAT
+       //Programmer: JACOB ANDERSON
+       //DATE: 3-26-2022
+
+       // ***********************************************************
+       // This program is called by PRJ7CALLER
+       // it generates the date to remind customers via email
+       // ***********************************************************
+
+       CTL-OPT NOMAIN;
+
+       // Main Prototype
+       Dcl-pr MAKEDATE DATE(*USA);
+         *N PACKED(8:0);
+       END-PR;
+
+       // Procedure - MODDAT
+
+       DCL-PROC MAKEDATE EXPORT;
+
+       // Procedure Interface
+       Dcl-pi *N DATE(*USA);
+         DATEIN PACKED(8:0);
+       END-PI;
+
+       DCL-S DATEOUT DATE(*USA);
+
+       // Logic
+       DATEOUT=%DATE(DATEIN:*USA);
+
+       Return DATEOUT;
+
+       END-PROC MAKEDATE;                              

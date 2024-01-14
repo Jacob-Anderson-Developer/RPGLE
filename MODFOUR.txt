@@ -1,0 +1,39 @@
+       //Program Name: MODFOUR
+       //Programmer: JACOB ANDERSON
+       //DATE: 3-26-2022
+
+       // ***********************************************************
+       // This program is called by PRJ7CALLER it extracts and prints
+       // the last 4 digits of the Customer Phone Number
+       // ***********************************************************
+
+
+       CTL-OPT NOMAIN;
+
+       // Standalone Variable Declaration
+       Dcl-s PHONE CHAR(10);
+
+       // Main Prototype
+       Dcl-pr MAKEFOUR CHAR(4);
+         *N     ZONED(10) VALUE;
+       END-PR;
+
+       // Procedure
+
+       DCL-PROC MAKEFOUR EXPORT;
+
+       Dcl-PI *N CHAR(4);
+         CPHONE ZONED(10) VALUE;
+       END-PI;
+
+
+       DCL-S FOURDIG CHAR(4);
+
+       //Logic
+       PHONE = %CHAR(CPHONE);
+       FOURDIG = %Subst(PHONE:7:4);
+
+       Return FOURDIG;
+
+       END-PROC MAKEFOUR;
+                                                    

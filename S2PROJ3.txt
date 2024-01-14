@@ -1,0 +1,75 @@
+**Free
+// PROJECT NAME: RPG 2 Project 3 Arrays
+// PROGRAMMER NAME: JACOB ANDERSON
+// DATE: 01/25/2022
+// THE PURPOSE OF THIS PROJECT IS TO LEARN
+// HOW TO USE ARRAYS IN RPG
+//
+//---------------------------------Control options
+Ctl-opt Option(*Nodebugio);
+//---------------------------------File Declarations
+Dcl-f GRADEBOOK     DISK KEYED;
+Dcl-f GRADES   Printer Usage(*Output) Oflind(Endofpage);
+
+//---------------------------------Constant declarations
+
+//---------------------------------Data Structure declarations
+Dcl-ds *N;            //Create data structure for array
+  SCORES CHAR(75);    //
+  SCOREARRAY Zoned(3:0) Dim(25) Pos(1);     //Starting with the first position
+                                            //Create an array with 25 elements
+                                            //3 spaces in length
+                                            //And No decimal
+                                            //This creates an array of scores
+                                            //extracted from the Scores
+                                            //character data
+END-DS;
+//---------------------------------Standalone variable declarations
+Dcl-s Endofpage Ind Inz(*On);
+Dcl-s X ZONED(3:0);
+Dcl-s TOTAL ZONED(3:0) Dim(12) Ctdata Descend;//Records read using the highest #
+                                              //First and working their way down
+Dcl-s LGRADE Char(2) Dim(12) Alt(TOTAL) ;     //Alternate TOTAL with a 2
+                                              //Character letter grade
+
+
+//---------------------------------Main Procedure
+Read GRADEBOOK;
+Dow Not %Eof();                         //Begin Loop
+
+
+  FULLNAME = %Trim(SFNAME)+ ' ' + %Trim(SLNAME); //Insert and trim Student Name
+  EVAL(H) AVERAGE = %XFOOT(SCOREARRAY)/25;       //Average and round student score
+  X = %Lookuple(AVERAGE:TOTAL);                  //Look up average and reference total
+  IF X > 0;                                      //If grades are present
+    LETGRD = LGRADE(X);                          //LETGRD becomes the letter grade
+                                                 //that corresponds to the score
+                                                 //stored in the LGRADE array
+    If Endofpage;                                //If its the end of the page
+      Write HEADINGS;                            //Write Headings
+      Endofpage = *off;
+    Endif;                                       //End if
+    Write Detail;                                //Write the detail line
+  ENDIF;                                         //End if
+  Read GRADEBOOK;
+Enddo;          //END LOOP
+*Inlr = *On;    //LAST RECORD INDICATOR ON
+return;
+
+
+
+///////////////////// TOTAL AND LGRADE DEFINED IN COMPILE TIME DATA
+
+**CTDATA TOTAL
+093A
+090A-
+087B+
+083B
+080B-
+077C+
+073C
+070C-
+067D+
+063D
+060D-
+000E                                                                                     

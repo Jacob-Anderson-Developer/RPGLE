@@ -1,0 +1,45 @@
+**Free
+// PROJECT NAME: WUINSTP
+// PROGRAMMER NAME: JACOB ANDERSON
+// DATE: 10/22/2021
+// THE PURPOSE OF THIS PROJECT IS TO UTILIZE
+// THE VARIOUS DATE FUNCTIONS THAT ARE AVAILABLE.
+//
+//---------------------------------Control options
+Ctl-opt Option(*Nodebugio);
+//---------------------------------File Declarations
+Dcl-f WUINSTP     Disk Keyed;
+Dcl-f RETIREREP   Printer Usage(*Output) Oflind(Endofpage);
+
+//---------------------------------Constant declarations
+
+//---------------------------------Data Structure declarations
+
+//---------------------------------Standalone variable declarations
+Dcl-s SALARYTOT ZONED(9:2);
+Dcl-s TODAY DATE Inz(*Sys);
+Dcl-s Endofpage Ind Inz(*On);
+
+//---------------------------------Main Procedure
+Read WUINSTP;
+Dow Not %Eof(WUINSTP);
+
+      HIREDATE = %Date(HIRDAT);
+      COMBINED = %Trim(IFNAME)+ ' ' + %Trim(ILNAME);
+      RDATE = HIREDATE + %Years(30);
+      RYEARS = %Diff(RDATE:TODAY:*Years);
+      COUNT = COUNT + 1;
+      SALARYTOT += SALARY;
+      AVGWAGE = SALARYTOT / COUNT;
+If Endofpage;
+
+  Write HEADINGS;
+  Endofpage = *off;
+Endif;
+Write DETAIL;
+Read WUINSTP;
+Enddo;
+Write FOOTER;
+*Inlr = *On;
+       return;
+                        

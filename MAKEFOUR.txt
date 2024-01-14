@@ -1,0 +1,30 @@
+       //Program Name: MAKEFOUR
+       //Programmer: JACOB ANDERSON
+       //DATE: 3-18-2022
+
+       // ***********************************************************
+       // This program is called by PRJ7CALLER it extracts and prints
+       // the last 4 digits of the Customer Phone Number
+       // ***********************************************************
+
+       // Standalone Variable Declaration
+       Dcl-s PHONE CHAR(10);
+
+       // Main Prototype
+       Dcl-pr Main ExtPgm('MAKEFOUR');
+         *N     ZONED(10) CONST;
+         *N     CHAR(4);
+       END-PR;
+
+       Dcl-PI Main;
+         CPHONE ZONED(10) CONST;
+         FOURDIG CHAR(4);
+       END-PI;
+
+       //Logic
+       PHONE = %CHAR(CPHONE);
+       FOURDIG = %Subst(PHONE:7:4);
+
+       *INLR = *On;
+       Return;
+                                                                    

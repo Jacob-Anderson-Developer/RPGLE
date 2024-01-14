@@ -1,0 +1,49 @@
+       //Program Name: MAKEID
+       //Programmer: JACOB ANDERSON
+       //DATE: 3-18-2022
+
+       // ***********************************************************
+       // This program is called by PRJ7CALLER it creates an ID for
+       // the customer from first and last name plus customer number
+       // ***********************************************************
+
+       //Standalone variable declarations
+       Dcl-s USERNO   CHAR (6);
+       Dcl-s RUFFN    CHAR (10);
+       Dcl-s RUFLN    CHAR (15);
+       Dcl-s RFFN     CHAR (1);
+       Dcl-s RFLN     CHAR (1);
+
+       //Constant Declarations
+       Dcl-c Lowercase 'abcdefghijklmnopqrstuvwxyz';
+       Dcl-c Uppercase 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+       // Main Prototype
+       Dcl-pr MAIN Extpgm('MAKEID');
+         *N     CHAR(10) CONST;
+         *N     CHAR(15) CONST;
+         *N     ZONED(6:0) CONST;
+         *N     CHAR(37);
+       END-PR;
+
+       // Procedure Interface
+       Dcl-PI Main;
+         CFNAME CHAR(10) CONST;
+         CLNAME CHAR(15) CONST;
+         CUSTNO ZONED(6:0) CONST;
+         CUSTID CHAR(37);
+       END-PI;
+
+       // Logic
+
+       // Dow Not %Eof;
+       /////////////////////////////Convert name and charactes to correct case
+       RUFFN = %XLATE(Uppercase:Lowercase:CFNAME);
+       RUFLN = %XLATE(Uppercase:Lowercase:CLNAME);
+       RFFN = %XLATE(Lowercase:Lowercase:RUFFN);
+       RFLN = %XLATE(Lowercase:Lowercase:RUFLN);
+       USERNO = %Char(CUSTNO);      //Convert Custno to a string
+
+       CUSTID = %Trim(RUFFN)+ '.' + %Trim(RUFLN)+ '.' + USERNO;  //Define Cust ID
+       *INLR = *On;
+       Return;                                                            

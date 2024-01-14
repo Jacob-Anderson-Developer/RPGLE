@@ -1,0 +1,54 @@
+**Free
+// PROJECT NAME: SUPPLIER
+// PROGRAMMER NAME: JACOB ANDERSON
+// DATE: 11/13/2021
+// THE PURPOSE OF THIS PROJECT IS TO CREATE
+// AN RPG PROGRAM THAT WILL INTERACT WITH MY INQ
+// SCREEN FILE.
+//
+//---------------------------------Control options
+Ctl-opt Option(*Nodebugio);
+
+//---------------------------------File Declarations
+
+Dcl-f CSINVP Disk Usage(*Input) Keyed;
+Dcl-f CSSUPP Disk Usage(*Input) Keyed;
+Dcl-f INQSCREEN Workstn Indds(Indicators);
+
+//---------------------------------Indicator Data Structures
+
+Dcl-ds Indicators Len(99);
+  Exit Ind Pos(3);              // F3=Exit
+  Cancel Ind Pos(12);           // F12=Cancel
+  NOPROD IND POS(90) INZ(*Off); // No Product Indicator
+  NOSUP  IND POS(95) INZ(*Off); // No Supplier
+END-DS;
+
+//---------------------------------Constant declarations
+
+//---------------------------------Data Structure declarations
+
+//---------------------------------Standalone variable declarations
+
+//---------------------------------Main Procedure
+
+  Dow Not Exit;                           //Begin Loop
+    Exfmt SCRN1;                          //Screen 1
+     If Not Exit;                         //Do while not exiting
+     Chain PRODIN CSINVP;                 //Chain the key from CSINVP
+         If %Found(CSINVP);               //If product is found
+           Chain (SUPCOD) CSSUPP;         //Chain the key from CSSUPP
+           If %Found(CSSUPP);             //If supplier code is found
+              Exfmt SCRN2;                //Execute screen 2
+           ELSE;                          //If no Supplier is found
+             NOSUP =  NOT %FOUND(CSSUPP); //Turn the no Supplier indicator on
+           ENDIF;
+         ELSE;                            //If no product is found
+           NOPROD = NOT %FOUND(CSINVP);   //Turn the no product indicator on
+         ENDIF;
+     ENDIF;
+  ENDDO;
+
+*Inlr = *On;
+       return;
+                                                                                               

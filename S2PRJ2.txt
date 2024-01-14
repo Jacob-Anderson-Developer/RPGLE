@@ -1,0 +1,58 @@
+**Free
+// PROJECT NAME: CIS 270 Project 2
+// PROGRAMMER NAME: JACOB ANDERSON
+// DATE: 1/21/2022
+// THE PURPOSE OF THIS PROJECT IS TO IMPLEMENT
+// THE CAPABILITY TO UPDATE THE FILE.
+//---------------------------------Control options
+Ctl-opt Option(*Nodebugio);
+//---------------------------------File Declarations
+
+Dcl-f MYCSTP   Disk Usage(*Update:*Output) Keyed;
+Dcl-f GTCPAYP  Usage(*Update:*Output) Keyed;
+Dcl-f S2PRJ2   Printer Usage(*Output) Oflind(Endofpage);
+
+//---------------------------------Constant declarations
+Dcl-s NOCUST ZONED(3:0);
+Dcl-s BALANCE ZONED(6:2);
+
+//---------------------------------Data Structure declarations
+
+//---------------------------------Standalone variable declarations
+
+Dcl-s Endofpage Ind Inz(*On);
+
+//---------------------------------Main Procedure
+Read GTCPAYP;
+Dow Not %Eof(GTCPAYP);
+
+CHAIN CPHONE MYCSTP; // Begin Chaining Keys
+
+If %Found(MYCSTP);        // If statement decides if the detail
+  BALANCE = AMTOWE-AMTPD; //The difference of the amount owed and amount paid is determined
+  AMTOWE = BALANCE;       //The amount owed becomes the balance
+  PAYDATL = DATRCVL;      //Update the date
+  PAYDAT = DATRCV;        //Update the date
+  CURBIL = BALANCE;       //Current bill becomes the balance
+  IF BALANCE < 0;         //If the balance is below zero
+
+    CURBIL=0;             //The current bill shows that it has been paid
+
+  ENDIF;
+  UPDATE CUSREC %FIELDS(AMTOWE:PAYDATL:PAYDAT:CURBIL); //Define update fields
+  CNAME = CLNAME;
+  FNAME = CFNAME;
+  If Endofpage;           // line or error line will be written
+    Write HEADINGS;
+    Endofpage = *off;
+  Endif;
+Write DETAIL;          //
+Else;                  //
+  Write ERROR;         //  Write error line if MYCSTP is not found
+  NOCUST += 1;         //  Customer error counter
+Endif;                 //  Writes error line if info
+  Read GTCPAYP;         //  is unavailable
+Enddo;                 //
+Write TOTAL;           //Write Total Line
+*Inlr = *On;           //
+       return;         //                                          

@@ -1,0 +1,72 @@
+      // PROJECT NAME: CIS 270 Project 10C(PROJ10ERR)
+      // PROGRAMMER NAME: JACOB ANDERSON
+      // DATE: 4/6/2022
+      // THE PURPOSE OF THIS PROJECT IS TO
+      // DEMONSTRATE MY ABILITY TO TRAP ERRORS
+
+
+      // This program has some VERY BAD LOGIC in it.
+      // Let's catch it with Monitor
+      // This program uses only variables to test these techniques
+      // There is no disk file
+      // Declare your printer file here
+       Dcl-f PROJ10C   Printer Usage(*Output) Oflind(Endofpage);
+
+
+
+       // The standalone variables used to test our Monitor blocks
+       Dcl-s Number1 Zoned(2:0);  // Note the size
+       Dcl-s Number2 Zoned(2:0);
+       Dcl-s AnArray Zoned(2:0)  Dim(5);  // a FIVE element array
+       // Code your named constants for the status codes here
+
+       Dcl-c DIVIDEBYZERO     00102;
+       Dcl-c OOBARRAY         00121;
+       Dcl-c SMALLVAR         00103;
+
+
+       // Add in the necessary code to handle the errors....
+
+       MONITOR;
+       //Let's practice catching a divide by zero error
+       Number2 = 0;        // Number2 will be our denominator
+       Number1 /= Number2; // this is illegal!!
+       ON-ERROR DIVIDEBYZERO;
+         EXSR ERROR1;
+       ENDMON;
+
+       MONITOR;
+       // Let's practice catching an invalid array index
+       for Number1 = 1 to 9; // can't go this far in this array!!
+         AnArray(Number1) = 22;
+       endfor;
+       ON-ERROR OOBARRAY;
+         EXSR ERROR2;
+       ENDMON;
+
+       MONITOR;
+       // Let's practic catching a Variable to Small to Hold Result Error
+       Number1 = 999999;  // Variable is too small to hold this!!
+       ON-ERROR SMALLVAR;
+         EXSR ERROR3;
+       ENDMON;
+
+       WRITE ERROR;
+
+       EVAL *INLR = *ON;  // Terminate Program
+       RETURN;
+
+       BEGSR ERROR1;
+         MSG = 'CANNOT DIVIDE BY ZERO';
+       ENDSR;
+
+       BEGSR ERROR2;
+         MSG2 = 'TOO MANY ELEMENTS IN ARRAY';
+       ENDSR;
+
+       BEGSR ERROR3;
+         MSG3 = 'VARIABLE TOO SMALL TO HOLD RESULT';
+       ENDSR;
+
+
+                                             

@@ -1,0 +1,67 @@
+**Free
+       //   For PROJECT 3  - Contains Errors
+       // *********************************************************
+       // This program calculates monthly payments for ComupSell  *
+       // customers based on the purchase amount and down payment.*
+       // All loans are for 12 months and at a fixed interest     *
+       // rate of 14%.                                            *
+       //    Author:  J. Yaeger    Date Written:  June 5, 1993    *
+       //            Converted to RPG IV  Nov. 1995               *
+       //            Converted to RPG IV V5 Nov. 2002             *
+       //    Updater: C. Anderson  Date Updated:  July 22, 2007   *
+       //            Changed print and input file to externally   *
+       //            described and added print file.              *
+       // *********************************************************
+       // Converted to free for 5th Edition                       *
+       // Programmer: Michelle Lyons                              *
+       // Date: June 12, 2015                                     *
+       // Questions or Concerns please contact me by e-mail at:   *
+       // mkincaid5@gmail.com                                     *
+       // *********************************************************
+       Ctl-opt option(*nodebugio);
+
+       // File Declarations
+       Dcl-f CSCFINP Disk    Usage(*Input);
+       Dcl-f FINREPORT Printer Usage(*output) oflind(overflow);
+
+       // Stand alone variables
+       dcl-s  AmtOwed         Zoned(8:2);
+       dcl-s  Interest        Zoned(7:2);
+       dcl-s  TotalDue        Zoned(7:2);
+       dcl-s  MonthPay        Zoned(6:2);
+       dcl-s  TotalDown       Zoned(8:2);
+       dcl-s  TotalOwed       Zoned(8:2);
+       dcl-s  TotalPay        Zoned(8:2);
+       dcl-s  CustCount       Zoned(3:0);
+
+       // Data Structure to redfine the Purchase Date Field
+       dcl-ds PurDate inz;
+         pdate   Zoned(8:0);
+           PurYr   Zoned(4:0) Pos(1);
+           PurMon  Zoned(2:0) Pos(5);
+           PurDay  Zoned(2:0) Pos(7);
+       end-ds;
+
+       //Processing and Calculations
+       write Heading;
+       read cscfinp;
+       Dow Not %Eof;
+         AmtOwed = FinAmt - DwnPay;
+         EVAL(H) Interest = AmtOwed * .14;
+         TotalDue = AmtOwed + Interest;
+         EVAL(H) MonthPay = TotalDue / 12;
+         TotalDown += DwnPay;
+         TotalOwed += AmtOwed;
+         TotalPay += MonthPay;
+         CustCount += 1;
+         PDate = CDATE;  // populates data structure with input data
+         if overflow;
+            overflow = *off;
+            write heading;
+         Endif;
+         write DETAIL;
+         read cscfinp;
+       enddo;
+       write Total;
+       *Inlr = *On;
+       return;                                                   

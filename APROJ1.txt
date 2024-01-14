@@ -1,0 +1,36 @@
+**Free
+// Program:  APROJ1
+// Programmer:  Jacob Anderson
+// Date Created:    1/14/2022
+// Revisions:
+// Purpose:  Calculates percentage for student assignment and assigns a letter
+// grade.
+Ctl-opt option(*srcSTmt: *noDebugIO);
+
+Dcl-f POINTSFILE Disk    Usage(*Input);
+Dcl-f APROJ1PRT  Printer Usage(*Output);
+
+Dcl-s PERCENTAGE Zoned(3:0);
+Dcl-s GRADE      Char(1);
+
+Write HEADING;
+Read POINTSFILE;
+Dow Not %EOF;
+Eval(H) PERCENTAGE = PTSRECEIVE / PTSPOSSIBL * 100;
+Select;
+When PERCENTAGE > 89;
+GRADE = 'A';
+When PERCENTAGE > 79;
+GRADE = 'B';
+When PERCENTAGE > 69;
+GRADE = 'C';
+When PERCENTAGE > 59;
+GRADE = 'D';
+Other;
+GRADE = 'E';
+Endsl;
+Write DETAIL;
+Read POINTSFILE;
+Enddo;
+*INLR = *ON;
+Return;                                 

@@ -1,0 +1,38 @@
+       //Program Name: MODNAME
+       //Programmer: JACOB ANDERSON
+       //DATE: 3-26-2022
+
+       // ***********************************************************
+       // This program is called by PRJ8CALLER it creates a full
+       // name for the customer from the fname and lname fields
+       // ***********************************************************
+
+       CTL-OPT NOMAIN;
+
+       // Main Prototype
+       Dcl-pr MakeName CHAR(26);
+         *N CHAR(10) VALUE;
+         *N CHAR(15) VALUE;
+       END-PR;
+
+       // Procedure - MAKENAME
+
+       DCL-PROC MakeName Export;
+
+       // Procedure Interface
+       Dcl-pi *N CHAR(26);
+         CFNAME CHAR(10)VALUE;
+         CLNAME CHAR(15)VALUE;
+       END-PI;
+
+       // Standalone variable
+
+       Dcl-s CUSTNAME Char(26);
+
+       //Logic
+
+       CUSTNAME = %Trim(CFNAME)+ ' ' + %Trim(CLNAME);
+
+       Return CUSTNAME;
+
+       END-PROC MAKENAME;        

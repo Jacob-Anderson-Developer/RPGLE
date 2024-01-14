@@ -1,0 +1,49 @@
+       // *******************************************************************
+       // This program calls a service program to generate a User ID        *
+       // and Password, given screen inputs of User's number, first name,   *
+       // and last name                                                     *
+       //     Author:  RPG Class Winter 2019                                *
+       // *******************************************************************
+       // Workstation File
+       Dcl-f USERSCREEN Workstn Indds(Indicators);
+
+       // Indicators for the Screen
+       Dcl-ds Indicators Len(99);
+         Exit  Ind Pos(3);   // F3 = Exit
+         Cancel Ind Pos(12); // F12 = Cancel
+       END-DS;
+
+       // CODE THE MAIN PROTOTYPE and PROCEDURE INTERFACE HERE
+
+       Dcl-pr Main ExtPgm('USERAPP') End-pr;
+
+       Dcl-pi Main End-pi;
+
+       // //MAKE CUSTOMER ID
+       Dcl-pr MAKEID CHAR(37);
+         *N     CHAR(10) VALUE;
+         *N     CHAR(15) VALUE;
+         *N     ZONED(6:0) VALUE;
+       END-PR;
+
+       //MAKE PASSWORD
+       Dcl-pr MAKEPASS CHAR(9);
+         *N     CHAR(10) VALUE;
+         *N     CHAR(15) VALUE;
+         *N     ZONED(6:0) VALUE;
+       END-PR;
+
+       // Logic
+       DOW NOT Exit;
+         EXFMT Scrn1;  // Display the Prompt Srceen
+            //  Only Display 2nd screen if they didn't press Exit
+           If NOT Exit;
+           // un-comment these two lines below and complete them with the calls
+             USERID = MAKEID(USERFIRST:USERLAST:USERNO);
+             PASSWORD = MAKEPASS(USERFIRST:USERLAST:USERNO);
+             EXFMT Scrn2; // Display the UserID and Password on Screen 2
+           EndIf;
+       ENDDO;
+       // Terminate Program
+       *INLR = *ON;
+       RETURN;                                                    

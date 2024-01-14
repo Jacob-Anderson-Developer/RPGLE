@@ -1,0 +1,85 @@
+**Free
+// PROJECT NAME: CMFILE
+// PROGRAMMER NAME: JACOB ANDERSON
+// DATE: 10/13/2021
+// THE PURPOSE OF THIS PROJECT IS TO IMPLEMENT VARIOUS CHARACTER
+// FUNCTIONS TO THE PROGRAM.
+//---------------------------------Control options
+Ctl-opt Option(*Nodebugio);
+//---------------------------------File Declarations
+Dcl-f CSCSTP   Disk       Usage(*Input);
+Dcl-f CMPRT1   Printer Usage(*Output) Oflind(Endofpage);
+
+//---------------------------------Constant declarations
+Dcl-c Editp '0(   )   -    ';
+Dcl-c Editz '(0''     -    '')';
+
+Dcl-c Lowercase 'abcdefghijklmnopqrstuvwxyz';
+Dcl-c Uppercase 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+//---------------------------------Data Structure declarations
+
+
+//---------------------------------Standalone variable declarations
+Dcl-s PHONE    ZONED(11:0);
+Dcl-s MyDate   VarChar (8);
+Dcl-s USERNO   CHAR (6);
+Dcl-s RUFFN    CHAR (10);
+Dcl-s RUFLN    CHAR (15);
+Dcl-s RFFN     CHAR (1);
+Dcl-s RFLN     CHAR (1);
+Dcl-s NUMZIP   PACKED (9:0);
+
+Dcl-s Endofpage Ind Inz(*On);
+
+//---------------------------------Main Procedure
+Read CSCSTP;
+Dow Not %Eof;
+/////////////////////////////Convert name and charactes to correct case
+RUFFN = %XLATE(Uppercase:Lowercase:CFNAME);
+RUFLN = %XLATE(Uppercase:Lowercase:CLNAME);
+RFFN = %XLATE(Lowercase:Lowercase:RUFFN);
+RFLN = %XLATE(Lowercase:Lowercase:RUFLN);
+USERNO = %Char(CUSTNO);      //Convert Custno to a string
+
+USERID = %Trim(RUFFN)+ '.' + %Trim(RUFLN)+ '.' + USERNO;  //Define User ID
+
+
+PASSWORD = %Trim(RFFN) + %Trim(RFLN) + USERNO + '!';    //Generate Password
+
+//////////////////////Generates a Name
+NAME = %XLATE(Lowercase:Uppercase:RFFN) + %Trim(%Subst(RUFFN:2)) + ' '
++ %XLATE(Lowercase:Uppercase:RFLN)+ %Trim(%Subst(RUFLN:2));
+
+
+NUMZIP = %DEC(CZIP:9:0);
+FINZIP = %Editw(NUMZIP:('     -    '));
+
+
+
+PHONE = CPHONE;
+FRMTPH = %Editw(PHONE:Editp);
+
+
+
+///////////////////////////////Pulls the 4 year date from the string
+MyDate = %Char(ORDDAT);
+BALANCE = %Editc(BALDUE:'J':*Cursym);
+
+IF %LEN(MyDate) = 7;
+  YearOut = %SUBST(MyDate:4:4);
+ELSE;
+  YearOut = %SUBST(MyDate:5:4);
+ENDIF;
+
+If Endofpage;
+
+  Write HEADINGS;
+  Endofpage = *off;
+Endif;
+Write DETAIL;
+Read CSCSTP;
+Enddo;
+*Inlr = *On;
+       return;
+                          

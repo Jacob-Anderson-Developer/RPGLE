@@ -1,0 +1,130 @@
+**Free
+// PROJECT NAME: Working with Subfiles
+// PROGRAMMER NAME: JACOB ANDERSON
+// DATE: 04/27/2022
+//
+// THE PURPOSE OF THIS PROJECT IS TO WRITE
+// A PROGRAM THAT WILL ACCESS AND UPDATE SUBFILES
+//
+//
+//---------------------------------Control options
+Ctl-opt Option(*Nodebugio);
+
+//---------------------------------File Declarations
+
+Dcl-f MYORDPRP Disk Usage(*Update:*Output:*Delete) Keyed;
+Dcl-f PRJ11SCR Workstn Indds(Indicators);
+
+//---------------------------------Indicator Data Structures
+
+Dcl-ds Indicators Len(99);
+  Exit      Ind Pos(3);   // F3=Exit
+  F10key    Ind Pos(10);  // F10=Delete
+  Cancel    Ind Pos(12);  // F12=Cancel
+  Fkey      Ind Pos(25);  // Vldcmdkey
+  Adderror  Ind Pos(30);  // Instructor already exists
+  Chgerror  Ind Pos(31);  // Instructor not found (change)
+  Dlterror  Ind Pos(32);  // Instructor not found (delete)
+  Addmode   Ind Pos(40);  // A = Add
+  Chgmode   Ind Pos(41);  // C = Change
+  Dltmode   Ind Pos(42);  // D = Delete
+  Invact    Ind Pos(43);  // Invalid Action
+
+END-DS;
+
+
+// ------------------------------------ Main Procedure //
+Dow Not Exit;
+  Exfmt SCRN1;
+
+  SELECT;
+    WHEN EXIT;
+      Invact = *Off;
+      LEAVE;
+    WHEN ACTION = 'SH';
+      Invact = *Off;
+      EXSR DSPSH;
+    WHEN ACTION = 'BO';
+      Invact = *Off;
+      EXSR DSPBO;
+    OTHER;
+      Invact = *On;
+  ENDSL;
+
+ENDDO;
+
+*Inlr = *On;
+Return;
+
+//------------------------------------- //
+BEGSR DSPSH;
+  Exsr Setmode;
+  Chain(n) ORDNO MYORDPRP;         //Chain(n) keeps you from locking the record
+  EXFMT SCRN2;                     //Execute Screen 2
+
+  IF NOT FKEY;
+    WRITE ORDERREC;
+    RESET ACTION;
+  ENDIF;
+ENDSR;
+     FCSINVP    IF   F  101        DISK
+     FQPRINT    O    F  132        PRINTER
+     ICSINVP    NS
+     I                                  1    6 0PRODNO
+     I                                 10   50  DESCRP
+     I                                 53   57  SHIPWT
+     I                                 62   65 0QTYOH
+     I                                 71   74 0RORPNT
+     I                                 78   82 0RORQTY
+     I                                 71   76 2SHPCST
+     I                                101  106 2AVGCST
+     I                                111  116 2CURCST
+     I                                121  126 2SELLCOST
+      /FREE
+       EXCEPT HEADINGS;
+       READ CSINVP;
+       DOW NOT %EOF;
+          EXCEPT DETAIL;
+          READ CSINVP;
+       ENDDO;
+       EVAL *INLR = *ON;       // *ON changed by Char
+       RETURN;
+      /END-FREE               // semicolon removed by Char
+     OQPRINT    E            HEADINGS       2 01
+     O                       UDATE         Y     15
+     O                                           74'CloudServices24x7, Inc.'
+     O                                          123 'Page'
+     O                       PAGE               125
+     O          E            HEADINGS       1
+     O                                           73 'Inventory Master Report'
+     O          E            HEADINGS       1
+     O                                            6 'Prod.'
+     O                                           58 'Weight'
+     O                                           68 'Qty. On'
+     O                                           77 'Reorder'
+     O                                           88 'Shipping'
+     O                                          108 'Average'
+     O                                          109 'Current'
+     O                                          129 'Selling'
+     O          E            HEADINGS       2
+     O                                            5 'Num.'
+     O                                           21 'Description'
+     O                                           58 'Lbs-Oz'
+     O                                           65 'Hand'
+     O                                           75 'Point'
+     O                                           82 'Qty.'
+     O                                           95 'Cost'
+     O                                          106 'Cost'
+     O                                          117 'Cost'
+     O                                          127 'Cost'
+     O          E            DETAIL         1
+     O                       PRODNO               7
+     O                       DESCRP              50
+     O                       SHIPWT              57
+     O                       QTYOH               69
+     O                       RORPNT              78
+     O                       RORQTY              88
+     O                       SHPCST              99
+     O                       AVGCST             109
+     O                       CURCST             119
+     O                       SELLCOST           129                                                             

@@ -1,0 +1,58 @@
+**Free
+// PROJECT NAME: SUPPLIER
+// PROGRAMMER NAME: JACOB ANDERSON
+// DATE: 11/13/2021
+// THE PURPOSE OF THIS PROJECT IS TO CREATE
+// AN RPG PROGRAM THAT WILL INTERACT WITH MY INQ
+// SCREEN FILE.
+//
+//---------------------------------Control options
+Ctl-opt Option(*Nodebugio);
+
+//---------------------------------File Declarations
+
+Dcl-f CSINVP Disk Usage(*Input) Keyed;
+Dcl-f CSSUPP Disk Usage(*Input) Keyed;
+Dcl-f INQSCREEN Workstn Indds(Indicators);
+
+//---------------------------------Indicator Data Structures
+
+Dcl-ds Indicators Len(99);
+  Exit Ind Pos(3);              // F3=Exit
+  Cancel Ind Pos(12);           // F12=Cancel
+  NOPROD IND POS(90) INZ(*Off); // No Product Indicator
+  NOSUP  IND POS(95) INZ(*Off); // No Supplier
+END-DS;
+
+//---------------------------------Constant declarations
+
+//---------------------------------Data Structure declarations
+
+//---------------------------------Standalone variable declarations
+
+//---------------------------------Main Procedure
+
+  Dow Not Exit;                           //Begin Loop
+    Exfmt SCRN1;                          //Screen 1
+     If Not Exit;                         //Do while not exiting
+     CHAIN ZIPIN CUSTLZIP;                //CHAIN ZIPIN from CUSTLZIP
+       If %FOUND(CUSTLZIP);               //IF ZIPIN is found
+         Write CustLine;                  //WRITE the Customer Line
+       ELSE;                              //Otherwise
+         Write NoCust;                    //Write the No Customer Line
+       ENDIF;
+     ENDIF;
+  ENDDO;
+
+*Inlr = *On;
+       return;
+
+Setgt *HiVal CustMaster;
+Readp CustMaster;
+
+
+If not %Eof(CustMaster);
+  Custnbr += 1;
+ELSE;
+  Custnbr = 1;
+ENDIF;        

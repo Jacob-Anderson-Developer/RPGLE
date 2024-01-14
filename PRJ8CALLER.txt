@@ -1,0 +1,91 @@
+       //Program Name: PRJ8CALLER
+       //Programmer: JACOB ANDERSON
+       //DATE: 3-26-2022
+
+       //****************************************************************
+       //  The purpose of this program is to call smaller programs
+       //  and to get experience with modular programming.
+       //  Calls Programs: MAKEID, MAKEPASS, MAKEFOUR, MAKEDATE, MAKENAME
+       //****************************************************************
+
+
+       //Control Options
+       Ctl-opt Option(*Nodebugio);
+
+       //File Declarations
+       Dcl-f CSCSTP; //Disk file that will be read sequentially
+       Dcl-f PROJ7PRT Printer Oflind(EndPage); // Printer File
+
+       //Standalone Variable Declaration
+       Dcl-s DATEIN DATE(*USA);
+       Dcl-s DATEOUT PACKED(8:0);
+
+       //Prototype and Procedure interface for PRJ7Caller Main
+       Dcl-pr Main ExtPgm('PRJ8CALLER') End-pr;
+
+       Dcl-pi Main End-pi;
+
+       //Prototypes for called subprocedures
+
+       //MAKE NAME
+       Dcl-pr MAKENAME CHAR(26);
+         *N     CHAR(10) VALUE;
+         *N     CHAR(15) VALUE;
+       END-PR;
+
+       //MAKE CUSTOMER ID
+       Dcl-pr MAKEID CHAR(37);
+         *N     CHAR(10) VALUE;
+         *N     CHAR(15) VALUE;
+         *N     ZONED(6:0) VALUE;
+       END-PR;
+
+       //MAKE PASSWORD
+       Dcl-pr MAKEPASS CHAR(9);
+         *N     CHAR(10) VALUE;
+         *N     CHAR(15) VALUE;
+         *N     ZONED(6:0) VALUE;
+       END-PR;
+
+       //MAKE DATE
+       Dcl-pr MAKEDATE Extpgm('MAKEDATE');
+         *N PACKED(8:0);
+         *N DATE(*USA);
+       END-PR;
+
+       //MAKE FOUR
+       Dcl-pr MAKEFOUR CHAR(4);
+         *N ZONED(10:0) VALUE;
+       END-PR;
+
+
+       // End Procedure
+       WRITE HEADING;
+       READ CSCSTP;   //PRIMING READ
+
+       // Mainline Processing
+       Dow not %EOF(CSCSTP);
+         IF ENDPAGE;
+           WRITE HEADING;
+           ENDPAGE = *Off;
+         ENDIF;
+
+       // CALL PROGRAMS
+
+       CUSTNAME =   MAKENAME(CFNAME:CLNAME);
+       CUSTID = MAKEID(CFNAME:CLNAME:CUSTNO);
+       PASS = MAKEPASS(CFNAME:CLNAME:CUSTNO);
+
+       /////////////////////////////////////DATE CALL
+
+       DATEOUT = ORDDAT;
+       MAKEDATE(DATEOUT:DATEIN);
+       REMDATE = DateIn + %DAYS(30);
+       //////////////////////////////////////////////
+       FOURDIG = MAKEFOUR(CPHONE);
+
+       WRITE DETAIL;
+       READ CSCSTP;
+       ENDDO;
+       *INLR = *On;
+       Return;                        

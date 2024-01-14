@@ -1,0 +1,57 @@
+       //Program Name: MODPASS
+       //Programmer: JACOB ANDERSON
+       //DATE: 3-26-2022
+
+
+       // ***********************************************************
+       // This program is called by PRJ8CALLER it creates a password
+       // from CFNAME, CLNAME and CUSTNO
+       // ***********************************************************
+
+       CTL-OPT NOMAIN;
+
+       //---------------------------------Standalone variable declarations
+       Dcl-s USERNO   CHAR (6);
+       Dcl-s RUFFN    CHAR (10);
+       Dcl-s RUFLN    CHAR (15);
+       Dcl-s RFFN     CHAR (1);
+       Dcl-s RFLN     CHAR (1);
+
+       //Constant Declarations
+       Dcl-c Lowercase 'abcdefghijklmnopqrstuvwxyz';
+       Dcl-c Uppercase 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+       // Main Prototype
+       Dcl-pr MakePass CHAR(9);
+         *N     CHAR(10) VALUE;
+         *N     CHAR(15) VALUE;
+         *N     ZONED(6:0) VALUE;
+       END-PR;
+
+        // Procedure - MAKENAME
+
+       DCL-PROC MakePass Export;
+
+       //Procedure Interface
+       Dcl-PI *N CHAR(9);
+         CFNAME CHAR(10) VALUE;
+         CLNAME CHAR(15) VALUE;
+         CUSTNO ZONED(6:0) VALUE;
+       END-PI;
+
+       //Standalone Variable Declaration
+       DCL-S  PASS CHAR(9);
+
+       // Logic
+       RUFFN = %XLATE(Uppercase:Lowercase:CFNAME);
+       RUFLN = %XLATE(Uppercase:Lowercase:CLNAME);
+       RFFN = %XLATE(Lowercase:Lowercase:RUFFN);
+       RFLN = %XLATE(Lowercase:Lowercase:RUFLN);
+       USERNO = %Char(CUSTNO);      //Convert Custno to a string
+
+       PASS = %Trim(RFFN) + %Trim(RFLN) + USERNO + '!';    //Generate Password
+
+       Return PASS;
+
+       END-PROC MakePass;
+                             

@@ -1,0 +1,29 @@
+**Free
+// PROJECT NAME: PROJECT1
+// PROGRAMMER NAME: JACOB ANDERSON
+// DATE: 8/30/2021
+// THE PURPOSE OF THIS PROJECT IS TO CREATE AN RPG PROGRAM.
+
+//---------------------------------Control options
+Ctl-opt Option(*Nodebugio);
+//---------------------------------File Declarations
+Dcl-f CSINVP Disk       Usage(*Input);
+Dcl-f INVREPORT Printer Usage(*Output) Oflind(Endofpage);
+
+//---------------------------------Standalone variable declarations
+Dcl-s Endofpage Ind Inz(*On);
+//---------------------------------Main Procedure
+Read CSINVP;
+
+Dow Not %Eof(CSINVP);
+If Endofpage;
+  Write HEADS;
+  Endofpage = *off;
+Endif;
+
+Write DETAIL;
+Read CSINVP;
+Enddo;
+
+*Inlr = *On;
+Return;                   

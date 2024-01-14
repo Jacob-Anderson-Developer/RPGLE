@@ -1,0 +1,29 @@
+**Free
+// PROJECT NAME: PROJECT1
+// PROGRAMMER NAME: JACOB ANDERSON
+// DATE: 8/30/2021
+// THE PURPOSE OF THIS PROJECT IS TO CREATE AN RPG PROGRAM.
+
+//---------------------------------Control options
+Ctl-opt Option(*Nodebugio);
+//---------------------------------File Declarations
+Dcl-f GTCSTP Disk       Usage(*Input);
+Dcl-f CUSTREPT Printer Usage(*Output) Oflind(Endofpage);
+
+//---------------------------------Standalone variable declarations
+Dcl-s Endofpage Ind Inz(*On);
+//---------------------------------Main Procedure
+Read GTCSTP;
+
+Dow Not %Eof(GTCSTP);
+If Endofpage;
+  Write HEADINGS;
+  Endofpage = *off;
+Endif;
+
+Write DETAIL;
+Read GTCSTP;
+Enddo;
+
+*Inlr = *On;
+Return;                                    

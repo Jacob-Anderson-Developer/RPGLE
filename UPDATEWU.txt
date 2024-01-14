@@ -1,0 +1,159 @@
+**Free
+// PROJECT NAME: UPDATE INSTRUCTOR FILE
+// PROGRAMMER NAME: JACOB ANDERSON
+// DATE: 03/07/2022
+//
+// THE PURPOSE OF THIS PROJECT IS TO WRITE
+// AN INTERACTIVE FILE MAINTENANCE PROGRAM
+// THAT WILL UPDATE THE INSTRUCTOR FILE.
+//
+//---------------------------------Control options
+Ctl-opt Option(*Nodebugio);
+
+//---------------------------------File Declarations
+
+Dcl-f MYINSTP Disk Usage(*Update:*Output:*Delete) Keyed;
+Dcl-f WUSCRN1 Workstn Indds(Indicators);
+
+//---------------------------------Indicator Data Structures
+
+Dcl-ds Indicators Len(99);
+  Exit      Ind Pos(3);   // F3=Exit
+  F10key    Ind Pos(10);  // F10=Delete
+  Cancel    Ind Pos(12);  // F12=Cancel
+  Fkey      Ind Pos(25);  // Vldcmdkey
+  Adderror  Ind Pos(30);  // Instructor already exists
+  Chgerror  Ind Pos(31);  // Instructor not found (change)
+  Dlterror  Ind Pos(32);  // Instructor not found (delete)
+  Addmode   Ind Pos(40);  // A = Add
+  Chgmode   Ind Pos(41);  // C = Change
+  Dltmode   Ind Pos(42);  // D = Delete
+  Invact    Ind Pos(43);  // Invalid Action
+
+END-DS;
+
+
+
+//Dcl-ds HIRDATE;
+//  HIREDATE DATE(*ISO);
+//    HIREYEAR   ZONED(4:0) OVERLAY(HIREDATE);
+//    HIREMONTH  ZONED(2:0) OVERLAY(HIREDATE:6);
+//    HIREDAY ZONED(2:0) OVERLAY(HIREDATE:9);
+//END-DS;
+//--------------------------------Date Declaration
+
+//DCL-S DATEIN Date(*Iso);
+
+// ------------------------------------ Main Procedure //
+Dow Not Exit;
+  Exfmt SCRN1;
+
+  SELECT;
+    WHEN EXIT;
+      Invact = *Off;
+      LEAVE;
+    WHEN ACTION = 'A';
+      Invact = *Off;
+      EXSR ADDRECORD;
+    WHEN ACTION = 'C';
+      Invact = *Off;
+      EXSR CHGRECORD;
+    WHEN ACTION = 'D';
+      Invact = *Off;
+      EXSR DLTRECORD;
+    OTHER;
+      Invact = *On;
+  ENDSL;
+
+ENDDO;
+
+*Inlr = *On;
+Return;
+
+//------------------------------------- Addrecord //
+// Add a instructor record
+Begsr Addrecord;
+  Exsr Setmode;
+  Chain(n) INSTNO MYINSTP;
+  ADDERROR = %FOUND(MYINSTP);
+
+  IF NOT ADDERROR;
+    EXSR RESETDATA;
+    MSG='ENTER TO ADD';
+    DATEIN = *Loval;
+    EXFMT SCRN2;
+
+    IF NOT FKEY;  //Do validation then date conversion here
+
+      HIRDAT = %DEC(DATEIN);
+      WRITE INSTREC;
+      RESET ACTION;
+      RESET INSTNO;
+    ENDIF;
+  ENDIF;
+  ENDSR;
+
+
+//  ----------------------------------- Chgrecord //
+// Change Instructor Record
+Begsr Chgrecord;
+  Exsr Setmode;
+  Chain INSTNO MYINSTP;
+  Chgerror = Not %Found(MYINSTP);
+
+  If Not Chgerror;
+    DATEIN = %DATE(HIRDAT);
+    MSG='ENTER TO CHANGE';
+    Exfmt SCRN2;
+    IF Not Fkey;   //Do validation then date conversion here
+
+    HIRDAT = %DEC(DATEIN);
+
+      Update INSTREC;
+      Reset Action;
+      Reset INSTNO;
+    ENDIF;
+  ENDIF;
+ENDSR;
+
+//  ------------------------------------ Dltrecord //
+// Delete an instructor record
+Begsr Dltrecord;
+  Exsr Setmode;
+  Chain INSTNO MYINSTP;
+  Dlterror = Not %Found(MYINSTP);
+
+  If Not Dlterror;
+    MSG='F10 TO DELETE';
+    Exfmt SCRN2;
+
+    IF F10key;
+      Reset Action;
+      Delete INSTREC;
+      Reset INSTREC;
+    ENDIF;
+  ENDIF;
+ENDSR;
+
+//  ----------------------------------- Reset Data //
+Begsr Resetdata;
+  Reset ifname;
+  Reset ilname;
+  Reset DEPT;
+  Reset SALARY;
+  Reset RANK;
+  Reset SEX;
+  RESET HIRDAT;
+  RESET MARSTS;
+  RESET DEPEND;
+  RESET TENURE;
+  RESET TITLE;
+ENDSR;
+
+//  ------------------------------------ Setmode //
+// Set Processing Action
+Begsr Setmode;
+  Addmode = (Action = 'A');
+  Chgmode = (Action = 'C');
+  Dltmode = (Action = 'D');
+ENDSR;                                                         
