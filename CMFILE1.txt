@@ -55,12 +55,8 @@ NAME = %XLATE(Lowercase:Uppercase:RFFN) + %Trim(%Subst(RUFFN:2)) + ' '
 NUMZIP = %DEC(CZIP:9:0);
 FINZIP = %Editw(NUMZIP:('     -    '));
 
-
-
 PHONE = CPHONE;
 FRMTPH = %Editw(PHONE:Editp);
-
-
 
 ///////////////////////////////Pulls the 4 year date from the string
 MyDate = %Char(ORDDAT);
